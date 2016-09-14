@@ -5,20 +5,45 @@
 
 #define BUFFER 1024
 
-int main(){
+int main(int argc, char **argv){
     int quit = 0;
     int reg;
+    int bash_mode = 0;
     regex_t regex;
+    FILE *f;
+    if (argc == 2)
+    {
+        f = fopen(argv[1], "r");
+        bash_mode = 1;
+    }
+    else if(argc > 2){
+        // error
+    }
+
 
     do{
         char line[BUFFER];  //get command line
         char* commands[512];
-        printf("Type Away Your Sin$ ");                   
+        //check to see if we received a fike
+        if (bash_mode)
+        {
+            if (fgets(line, BUFFER - 1, f) != NULL){
+                printf(">>>$%s\n", line);
+            }
+            else{
+                break;
+            }
+        }
+        else{
+            printf("Type Away Your Sin$ ");                   
 
             if(!fgets(line, BUFFER, stdin)){  
-            break;                                //if user hits CTRL+D break
+             break;                                //if user hits CTRL+D break
+            }
+
         }
         size_t length = strlen(line);
+        // removes newline character if its there
         if (line[length - 1] == '\n')
             line[length - 1] = '\0';
 
@@ -40,8 +65,8 @@ int main(){
         childPids = malloc(numberOfChildren * sizeof(pid_t));
         for (int x = 0; x < j; ++x)
         {
-            char* argv[400];     
-            int argc;               
+            char* argv_t[400];     
+            int argc_t;               
 
 
             int c_i = 0;
@@ -64,19 +89,19 @@ int main(){
             token = strtok(commands[x]," ");
             int i=0;
             while(token!=NULL){
-                argv[i]=token;      
+                argv_t[i]=token;      
                 token = strtok(NULL," ");
                 i++;
             }
-            argv[i]=NULL;                     //set last value to NULL for execvp
-            argv[i+1]=NULL;
-            argc=i; 
-            for(int yy=0; yy<strlen(argv[0]); yy++){    //delete newline
-                if(argv[0][yy]=='\n'){      
-                    argv[0][yy]='\0';
+            argv_t[i]=NULL;                     //set last value to NULL for execvp
+            argv_t[i+1]=NULL;
+            argc_t=i; 
+            for(int yy=0; yy<strlen(argv_t[0]); yy++){    //delete newline
+                if(argv_t[0][yy]=='\n'){      
+                    argv_t[0][yy]='\0';
                 }
             }
-            if(strcmp(argv[0], "quit")==0){            //check if command is quit
+            if(strcmp(argv_t[0], "quit")==0){            //check if command is quit
                 quit = 1;
                 number_quits++;
                 continue;
@@ -87,11 +112,11 @@ int main(){
                 abort();
               } 
             else if (childPids[x] == 0) {
-                execvp(argv[0],argv);
-                printf("%s with %s\n", "Error",argv[0]);
+                execvp(argv_t[0],argv_t);
+                printf("%s with %s\n", "Error",argv_t[0]);
                 exit(0);
               }
-              argv[0][0] = '\0';
+              argv_t[0][0] = '\0';
         
         }
         int status;
