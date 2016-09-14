@@ -1,18 +1,21 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <regex.h>
 
 #define BUFFER 1024
 
 int main(){
     int quit = 0;
+    int reg;
+    regex_t regex;
 
     do{
         char line[BUFFER];  //get command line
-        char* commands[400];
-        printf("Type Away Your Sin$ ");                    //print shell prompt
+        char* commands[512];
+        printf("Type Away Your Sin$ ");                   
 
-            if(!fgets(line, BUFFER, stdin)){  //get command and put it in line
+            if(!fgets(line, BUFFER, stdin)){  
             break;                                //if user hits CTRL+D break
         }
         size_t length = strlen(line);
@@ -37,12 +40,27 @@ int main(){
         childPids = malloc(numberOfChildren * sizeof(pid_t));
         for (int x = 0; x < j; ++x)
         {
-            char* argv[400]; 
-            char progpath[200];      //full file path
-            int argc;               //arg count
+            char* argv[400];     
+            int argc;               
 
 
-            char *token;                  //split command into separate strings
+            int c_i = 0;
+            int non_white = 0;
+            while(commands[x][c_i]){
+                if (!isspace(commands[x][c_i]))
+                {
+                    non_white = 999;
+                }
+                c_i++;
+            }
+
+            if (non_white!=999)
+            {
+                number_quits++;
+                continue;
+            }
+
+            char *token;                  
             token = strtok(commands[x]," ");
             int i=0;
             while(token!=NULL){
