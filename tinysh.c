@@ -33,6 +33,7 @@ int main(){
         int numberOfChildren = j;
         pid_t *childPids = NULL;
         pid_t p;
+        int number_quits = 0;
         childPids = malloc(numberOfChildren * sizeof(pid_t));
         for (int x = 0; x < j; ++x)
         {
@@ -59,10 +60,9 @@ int main(){
             }
             if(strcmp(argv[0], "quit")==0){            //check if command is quit
                 quit = 1;
+                number_quits++;
                 continue;
             }
-
-            printf("%d\n", quit);
 
             if ((childPids[x] = fork()) < 0) {
                 perror("fork");
@@ -78,7 +78,7 @@ int main(){
         }
         int status;
         pid_t pid;
-        int n = numberOfChildren;
+        int n = numberOfChildren - number_quits;
         while (n > 0) {
           pid = wait(&status);
           printf("Child with PID %ld exited with status 0x%x.\n", (long)pid, status);
